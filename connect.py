@@ -88,6 +88,11 @@ class PostgresBaseManager:
                 datas = datas + str(data) + ", "
             print("Data row = " + datas )
 
+    def alter(self):
+        cur = self.conn.cursor()
+        cur.execute("ALTER TABLE accounts_table ALTER COLUMN date TYPE timestamp USING date::timestamp;")
+        self.conn.commit()
+
     def insert(self):
         cur = self.conn.cursor()
         date = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
@@ -124,6 +129,7 @@ if __name__ == '__main__':
     # postgres_manager.createtable()
     postgres_manager.select()
     postgres_manager.insert()
+    # postgres_manager.alter()
     postgres_manager.select()
 
     postgres_manager.closePostgresConnection()
