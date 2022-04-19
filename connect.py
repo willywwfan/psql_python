@@ -21,7 +21,8 @@ class PostgresBaseManager:
             user=self.user,
             password=self.password,
             host=self.host,
-            port=self.port)
+            port=self.port,
+            sslmode="require")
         return conn
 
     def closePostgresConnection(self):
@@ -79,14 +80,15 @@ class PostgresBaseManager:
 
     def select(self):
         cur = self.conn.cursor()
-        cur.execute("SELECT * FROM accounts_table;")
+        cur.execute("SELECT * FROM accounts_table WHERE DATE_PART('week', date) = DATE_PART('week', NOW());")
         rows = cur.fetchall()
-        print("table:")
+        self.selected = ""
         for row in rows:
             datas = ""
             for data in row:
                 datas = datas + str(data) + ", "
-            print("Data row = " + datas )
+            self.selected += datas + "\n\t\n"
+        # self.selected -= "\n\t\n"
 
     def alter(self):
         cur = self.conn.cursor()
@@ -127,9 +129,10 @@ if __name__ == '__main__':
     # postgres_manager.listtable()
     # postgres_manager.delete()
     # postgres_manager.createtable()
-    postgres_manager.select()
-    postgres_manager.insert()
+    # postgres_manager.select()
+    # postgres_manager.insert()
     # postgres_manager.alter()
     postgres_manager.select()
+    print(postgres_manager.selected)
 
     postgres_manager.closePostgresConnection()
